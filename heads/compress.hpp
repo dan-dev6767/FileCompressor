@@ -13,5 +13,6 @@
 #include <filesystem>
 namespace FileCompression 
 {
-    Compression_API void lazyCompress(std::filesystem::path path, int level, int threads);
+    Compression_API void lazyCompression(std::filesystem::path path, int level, int threads);
+    Compression_API void lazyDecompression(std::filesystem::path path);
 };
