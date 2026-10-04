@@ -1,0 +1,43 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(main VERSION 0.5.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Include FetchContent to download libraries from GitHub
+include(FetchContent)
+
+# Installing [zstd]
+FetchContent_Declare(
+    zstd
+    GIT_REPOSITORY https://github.com/facebook/zstd.git
+    GIT_TAG v1.5.7
+    GIT_SHALLOW TRUE
+    SOURCE_SUBDIR build/cmake
+)
+FetchContent_MakeAvailable(zstd)
+
+# Installing [CLI11]
+FetchContent_Declare(
+    cli11_proj
+    GIT_REPOSITORY https://github.com/CLIUtils/CLI11.git
+    GIT_TAG v2.4.0
+)
+FetchContent_MakeAvailable(cli11_proj)
+
+# BUILD .dll FILE
+add_library(FileCompress SHARED 
+    src/compress.cpp
+)
+
+target_include_directories(FileCompress PUBLIC 
+    ${CMAKE_SOURCE_DIR}/heads)
+ 
+target_compile_definitions(FileCompress PRIVATE COMPRESSION_EXPORT)
+
+target_link_libraries(FileCompress PRIVATE libzstd_static)
+
+# EXECUTOR
+add_executable(${PROJECT_NAME} src/main.cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE FileCompress CLI11::CLI11)
